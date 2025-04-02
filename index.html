@@ -6,56 +6,126 @@
     <title>測驗</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            width: 80%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1s ease-in-out;
         }
         .question {
+            font-size: 1.2em;
             margin-bottom: 20px;
         }
-        .result {
-            margin-top: 20px;
-            font-weight: bold;
+        .options label {
+            display: block;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        button {
+            background: #2575fc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #6a11cb;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 <body>
-    <h1>測驗</h1>
-    <form id="quizForm">
-        <div class="question">
-            <p>1. HTML 是什麼的縮寫？</p>
-            <label><input type="radio" name="q1" value="a"> Hyper Text Markup Language</label><br>
-            <label><input type="radio" name="q1" value="b"> High Text Machine Language</label><br>
-            <label><input type="radio" name="q1" value="c"> Hyperlink and Text Markup Language</label>
+    <div class="container">
+        <div id="quizPage">
+            <!-- 問題內容將由 JavaScript 動態插入 -->
         </div>
-        <div class="question">
-            <p>2. 哪個標籤用於建立超連結？</p>
-            <label><input type="radio" name="q2" value="a"> &lt;link&gt;</label><br>
-            <label><input type="radio" name="q2" value="b"> &lt;a&gt;</label><br>
-            <label><input type="radio" name="q2" value="c"> &lt;href&gt;</label>
-        </div>
-        <button type="button" onclick="submitQuiz()">提交</button>
-    </form>
-    <div class="result" id="result"></div>
+        <button id="nextButton" onclick="nextQuestion()">下一題</button>
+    </div>
 
     <script>
-        function submitQuiz() {
-            const answers = {
-                q1: 'a',
-                q2: 'b'
-            };
-            let score = 0;
-            const form = document.getElementById('quizForm');
-            const resultDiv = document.getElementById('result');
+        const questions = [
+            { question: "HTML 是什麼的縮寫？", options: ["Hyper Text Markup Language", "High Text Machine Language", "Hyperlink and Text Markup Language"], answer: 0 },
+            { question: "哪個標籤用於建立超連結？", options: ["<link>", "<a>", "<href>"], answer: 1 },
+            { question: "CSS 是什麼的縮寫？", options: ["Cascading Style Sheets", "Creative Style System", "Computer Style Syntax"], answer: 0 },
+            { question: "JavaScript 是什麼類型的語言？", options: ["靜態語言", "動態語言", "標記語言"], answer: 1 }
+        ];
 
-            for (const [question, correctAnswer] of Object.entries(answers)) {
-                const userAnswer = form.elements[question].value;
-                if (userAnswer === correctAnswer) {
-                    score++;
-                }
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            const quizPage = document.getElementById('quizPage');
+            const questionData = questions[currentQuestionIndex];
+            quizPage.innerHTML = `
+                <div class="question">${questionData.question}</div>
+                <div class="options">
+                    ${questionData.options.map((option, index) => `
+                        <label>
+                            <input type="radio" name="option" value="${index}">
+                            ${option}
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function nextQuestion() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (!selectedOption) {
+                alert("請選擇一個答案！");
+                return;
             }
 
-            resultDiv.textContent = `你的得分是 ${score} / ${Object.keys(answers).length}`;
+            const answer = parseInt(selectedOption.value);
+            if (answer === questions[currentQuestionIndex].answer) {
+                score++;
+            }
+
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
         }
+
+        function showResult() {
+            const quizPage = document.getElementById('quizPage');
+            quizPage.innerHTML = `
+                <div class="question">測驗完成！</div>
+                <div class="result">你的得分是 ${score} / ${questions.length}</div>
+            `;
+            document.getElementById('nextButton').style.display = 'none';
+        }
+
+        // 初始化第一題
+        loadQuestion();
     </script>
 </body>
 </html>
