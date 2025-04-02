@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>測驗</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>測驗</h1>
+    <form id="quizForm">
+        <div class="question">
+            <p>1. HTML 是什麼的縮寫？</p>
+            <label><input type="radio" name="q1" value="a"> Hyper Text Markup Language</label><br>
+            <label><input type="radio" name="q1" value="b"> High Text Machine Language</label><br>
+            <label><input type="radio" name="q1" value="c"> Hyperlink and Text Markup Language</label>
+        </div>
+        <div class="question">
+            <p>2. 哪個標籤用於建立超連結？</p>
+            <label><input type="radio" name="q2" value="a"> &lt;link&gt;</label><br>
+            <label><input type="radio" name="q2" value="b"> &lt;a&gt;</label><br>
+            <label><input type="radio" name="q2" value="c"> &lt;href&gt;</label>
+        </div>
+        <button type="button" onclick="submitQuiz()">提交</button>
+    </form>
+    <div class="result" id="result"></div>
+
+    <script>
+        function submitQuiz() {
+            const answers = {
+                q1: 'a',
+                q2: 'b'
+            };
+            let score = 0;
+            const form = document.getElementById('quizForm');
+            const resultDiv = document.getElementById('result');
+
+            for (const [question, correctAnswer] of Object.entries(answers)) {
+                const userAnswer = form.elements[question].value;
+                if (userAnswer === correctAnswer) {
+                    score++;
+                }
+            }
+
+            resultDiv.textContent = `你的得分是 ${score} / ${Object.keys(answers).length}`;
+        }
+    </script>
+</body>
+</html>
